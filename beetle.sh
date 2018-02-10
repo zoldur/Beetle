@@ -51,22 +51,30 @@ else
 fi
 
 clear
+DEFAULTBEETUSER="beetle"
+read -p "Beetle user: " -i $DEFAULTBEETUSER -e BEETUSER
+: ${BEETUSER:=$DEFAULTBEETUSER}
+useradd -m $BEETUSER >/dev/null
+BEETHOME=$(sudo -H -u $BEETUSER bash -c 'echo $HOME')
+
 echo -e "Clone git and compile it. This may take some time. Press a key to continue."
 read -n 1 -s -r -p ""
-git clone https://github.com/beetledev/BeetleCoin
-cd BeetleCoin/src
-make -f makefile.unix
+
+sudo -u $BEETUSER git clone https://github.com/beetledev/BeetleCoin $BEETHOME/BeetleCoin
+sudo -u $BEETUSER cd $BEETHOME/BeetleCoin/src
+sudo -u $BEETUSER make -f makefile.unix
 if [ "$?" -gt "0" ];
  then
   echo -e "${RED}Failed to compile beetle. Please investigate.${NC}"
   exit 1
 fi
 cp -a beetled /usr/local/bin
+chown $BEETUSER /usr/local/bin/beetled
 
 clear
 
 echo -e "${GREEN}Prepare to configure and start Beetle Masternode.${NC}"
-DEFAULTBEETFOLDER="/root/.Beetle"
+DEFAULTBEETFOLDER="$BEETHOME/.Beetle"
 read -p "Configuration folder: " -i $DEFAULTBEETFOLDER -e BEETFOLDER
 : ${BEETFOLDER:=$DEFAULTBEETFOLDER}
 
@@ -74,7 +82,7 @@ DEFAULTBEETPORT=45823
 read -p "BEET Port: " -i $DEFAULTBEETPORT -e BEETPORT
 : ${BEETPORT:=$DEFAULTBEETPOR}
 
-mkdir -p $BEETFOLDER
+sudo -u $BEETUSER mkdir -p $BEETFOLDER
 RPCUSER=$(pwgen -s 8 1)
 RPCPASSWORD=$(pwgen -s 15 1)
 cat << EOF > $BEETFOLDER/Beetle.conf
@@ -85,8 +93,9 @@ listen=1
 server=1
 daemon=1
 EOF
+chown $BEETUSER $BEETFOLDER/Beetle.conf >/dev/null
 
-/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER 
+sudo -u $BEETUSER /usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER
 sleep 5
 
 if [ -z "$(pidof beetled)" ]; then
@@ -94,7 +103,7 @@ if [ -z "$(pidof beetled)" ]; then
   exit 1
 fi
 
-BEETLEKEY=$(/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER masternode genkey)
+BEETLEKEY=$(sudo -u $BEETUSER /usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER masternode genkey)
 
 kill $(pidof beetled)
 
@@ -107,6 +116,7 @@ masternode=1
 masternodeaddr=$NODEIP
 masternodeprivkey=$BEETLEKEY
 EOF
+chown -r $BEETUSER: $BEETFOLDER >/dev/null
 
 cat << EOF > /etc/systemd/system/beetled.service
 [Unit]
@@ -116,7 +126,7 @@ After=network.target
 ExecStart=/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER
 ExecStop=/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER stop
 Restart=on-abort
-User=root
+User=$BEETUSER
 Group=root
 [Install]
 WantedBy=multi-user.target
@@ -141,6 +151,6 @@ if [ "$FWSTATUS" = "active" ]; then
   ufw allow $BEETPORT/tcp comment "Beetle MN port" >/dev/null
 fi
 
-echo -e "${GREEN}Beetle Masternode is up and running listening on port $BEETPORT.${NC}" 
+echo -e "Beetle Masternode is up and running as user ${GREEN}$BEETUSER${NC} and it is listening on port ${GREEN}$BEETPORT${NC}." 
 echo -e "Configuration file is: ${RED}$BEETFOLDER/Beetle.conf${NC}"
 echo -e "MASTERNODE PRIVATEKEY is: ${RED}$BEETLEKEY${NC}"
