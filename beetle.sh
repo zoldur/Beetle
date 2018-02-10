@@ -141,6 +141,6 @@ if [ "$FWSTATUS" = "active" ]; then
   ufw allow $BEETPORT/tcp comment "Beetle MN port" >/dev/null
 fi
 
-echo -e "${GREEN}Beetle Masternode is up and running.${NC}" 
+echo -e "${GREEN}Beetle Masternode is up and running listening on port $BEETPORT.${NC}" 
 echo -e "Configuration file is: ${RED}$BEETFOLDER/Beetle.conf${NC}"
 echo -e "MASTERNODE PRIVATEKEY is: ${RED}$BEETLEKEY${NC}"
