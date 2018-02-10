@@ -82,11 +82,17 @@ server=1
 daemon=1
 EOF
 
-/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER/ 
+/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER 
 sleep 5
-BEETLEKEY=$(/usr/local/bin/beetled masternode genkey)
 
-/usr/local/bin/beetled stop
+if [ -z "$(pidof beetled)" ]; then
+  echo -e "${RED}Beetled server couldn't start. Check /var/log/syslog for errors.{$NC}"
+  exit 1
+fi
+
+BEETLEKEY=$(/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER masternode genkey)
+
+/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER stop
 
 sed -i 's/daemon=1/daemon=0/' $BEETFOLDER/Beetle.conf
 NODEIP=$(curl -s4 icanhazip.com)
@@ -115,7 +121,7 @@ EOF
 systemctl start beetled.service
 systemctl enable beetled.service
 
-clear
+
 systemctl status beetled >/dev/null 2>&1
 if [ "$?" -gt "0" ]; then
   echo -e "${RED}Beetled is not running${NC}, please investigate. You should start by running the following commands:"
@@ -124,6 +130,7 @@ if [ "$?" -gt "0" ]; then
   exit 
 fi
 
+clear
 echo -e "${GREEN}Beetle Masternode is up and running.${NC}" 
-echo -e "Configuration file is: ${RED}$BEETLEFOLDER/Beetle.conf${NC}"
+echo -e "Configuration file is: ${RED}$BEETFOLDER/Beetle.conf${NC}"
 echo -e "MASTERNODE PRIVATEKEY is: ${RED}$BEETLEKEY${NC}"
