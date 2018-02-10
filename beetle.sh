@@ -149,6 +149,7 @@ FWSTATUS=$(ufw status 2>/dev/null|awk '/^Status:/{print $NF}')
 if [ "$FWSTATUS" = "active" ]; then
   echo -e "Setting up firewall to allow ingress on port ${GREEN}$BEETPORT${NC}"
   ufw allow $BEETPORT/tcp comment "Beetle MN port" >/dev/null
+  ufw allow 22/tcp >/dev/null
 fi
 
 echo
