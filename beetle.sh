@@ -56,20 +56,22 @@ read -p "Beetle user: " -i $DEFAULTBEETUSER -e BEETUSER
 : ${BEETUSER:=$DEFAULTBEETUSER}
 useradd -m $BEETUSER >/dev/null
 BEETHOME=$(sudo -H -u $BEETUSER bash -c 'echo $HOME')
+echo $BEETHOME
+read
 
 echo -e "Clone git and compile it. This may take some time. Press a key to continue."
 read -n 1 -s -r -p ""
 
-sudo -u $BEETUSER git clone https://github.com/beetledev/BeetleCoin $BEETHOME/BeetleCoin
-sudo -u $BEETUSER cd $BEETHOME/BeetleCoin/src
-sudo -u $BEETUSER make -f makefile.unix
+git clone https://github.com/beetledev/BeetleCoin 
+cd BeetleCoin/src
+make -f makefile.unix
 if [ "$?" -gt "0" ];
  then
   echo -e "${RED}Failed to compile beetle. Please investigate.${NC}"
   exit 1
 fi
 cp -a beetled /usr/local/bin
-chown $BEETUSER /usr/local/bin/beetled
+chown $BEETUSER: /usr/local/bin/beetled
 
 clear
 
@@ -82,7 +84,7 @@ DEFAULTBEETPORT=45823
 read -p "BEET Port: " -i $DEFAULTBEETPORT -e BEETPORT
 : ${BEETPORT:=$DEFAULTBEETPOR}
 
-sudo -u $BEETUSER mkdir -p $BEETFOLDER
+mkdir -p $BEETFOLDER
 RPCUSER=$(pwgen -s 8 1)
 RPCPASSWORD=$(pwgen -s 15 1)
 cat << EOF > $BEETFOLDER/Beetle.conf
@@ -93,7 +95,7 @@ listen=1
 server=1
 daemon=1
 EOF
-chown $BEETUSER $BEETFOLDER/Beetle.conf >/dev/null
+chown -R $BEETUSER $BEETFOLDER >/dev/null
 
 sudo -u $BEETUSER /usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER
 sleep 5
@@ -116,7 +118,7 @@ masternode=1
 masternodeaddr=$NODEIP
 masternodeprivkey=$BEETLEKEY
 EOF
-chown -r $BEETUSER: $BEETFOLDER >/dev/null
+chown -R $BEETUSER: $BEETFOLDER >/dev/null
 
 cat << EOF > /etc/systemd/system/beetled.service
 [Unit]
@@ -151,6 +153,9 @@ if [ "$FWSTATUS" = "active" ]; then
   ufw allow $BEETPORT/tcp comment "Beetle MN port" >/dev/null
 fi
 
+echo
+echo -e "======================================================================================================================="
 echo -e "Beetle Masternode is up and running as user ${GREEN}$BEETUSER${NC} and it is listening on port ${GREEN}$BEETPORT${NC}." 
 echo -e "Configuration file is: ${RED}$BEETFOLDER/Beetle.conf${NC}"
 echo -e "MASTERNODE PRIVATEKEY is: ${RED}$BEETLEKEY${NC}"
+echo -e "========================================================================================================================"
