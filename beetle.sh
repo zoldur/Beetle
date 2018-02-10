@@ -132,24 +132,24 @@ Group=root
 WantedBy=multi-user.target
 EOF
 
-systemctl daemon-reload
-systemctl start beetled.service
-systemctl enable beetled.service
-
-
-systemctl status beetled.service >/dev/null 2>&1
-if [ "$?" -gt "0" ]; then
-  echo -e "${RED}Beetled is not running${NC}, please investigate. You should start by running the following commands:"
-  echo "systemctl status beetled.service"
-  echo "less /var/log/syslog"
-  exit 1 
-fi
 
 FWSTATUS=$(ufw status 2>/dev/null|awk '/^Status:/{print $NF}')
 if [ "$FWSTATUS" = "active" ]; then
   echo -e "Setting up firewall to allow ingress on port ${GREEN}$BEETPORT${NC}"
   ufw allow $BEETPORT/tcp comment "Beetle MN port" >/dev/null
-  ufw allow 22/tcp >/dev/null
+fi
+
+systemctl daemon-reload
+systemctl start beetled.service
+systemctl enable beetled.service
+
+
+if [[ -z $(pidof beetled) ]]; then
+  echo -e "${RED}Beetled is not running${NC}, please investigate. You should start by running the following commands:"
+  echo "systemctl start beetled.service"
+  echo "systemctl status beetled.service"
+  echo "less /var/log/syslog"
+  exit 1 
 fi
 
 echo
@@ -158,3 +158,4 @@ echo -e "Beetle Masternode is up and running as user ${GREEN}$BEETUSER${NC} and 
 echo -e "Configuration file is: ${RED}$BEETFOLDER/Beetle.conf${NC}"
 echo -e "MASTERNODE PRIVATEKEY is: ${RED}$BEETLEKEY${NC}"
 echo -e "========================================================================================================================"
+
