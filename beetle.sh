@@ -11,6 +11,11 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+if [ -n "$(pidof beetled)" ]; then
+  echo -e "${GREEN}Beetle already running.${NC}"
+  exit 1
+fi
+
 echo -e "Prepare the system to install Beetle master node."
 apt-get update > /dev/null 2>&1
 apt -y install software-properties-common > /dev/null 2>&1
@@ -44,7 +49,6 @@ if [ "$PHYMEM" -lt "2" ];
 else
   echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
 fi
-#fi
 
 clear
 echo -e "Clone git and compile it. This may take some time. Press a key to continue."
@@ -92,7 +96,7 @@ fi
 
 BEETLEKEY=$(/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER masternode genkey)
 
-/usr/local/bin/beetled -conf=$BEETFOLDER/Beetle.conf -datadir=$BEETFOLDER stop
+kill $(pidof beetled)
 
 sed -i 's/daemon=1/daemon=0/' $BEETFOLDER/Beetle.conf
 NODEIP=$(curl -s4 icanhazip.com)
@@ -118,19 +122,25 @@ Group=root
 WantedBy=multi-user.target
 EOF
 
+systemctl daemon-reload
 systemctl start beetled.service
 systemctl enable beetled.service
 
 
-systemctl status beetled >/dev/null 2>&1
+systemctl status beetled.service >/dev/null 2>&1
 if [ "$?" -gt "0" ]; then
   echo -e "${RED}Beetled is not running${NC}, please investigate. You should start by running the following commands:"
   echo "systemctl status beetled.service"
   echo "less /var/log/syslog"
-  exit 
+  exit 1 
 fi
 
-clear
-echo -e "${GREEN}Beetle Masternode is up and running.${NC}" 
+FWSTATUS=$(ufw status 2>/dev/null|awk '/^Status:/{print $NF}')
+if [ "$FWSTATUS" = "active" ]; then
+  echo -e "Setting up firewall to allow ingress on port ${GREEN}$BEETPORT${NC}"
+  ufw allow $BEETPORT/tcp comment "Beetle MN port" >/dev/null
+fi
+
+echo -e "${GREEN}Beetle Masternode is up and running listening on port $BEETPORT.${NC}" 
 echo -e "Configuration file is: ${RED}$BEETFOLDER/Beetle.conf${NC}"
 echo -e "MASTERNODE PRIVATEKEY is: ${RED}$BEETLEKEY${NC}"
