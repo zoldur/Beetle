@@ -42,7 +42,7 @@ if [ "$PHYMEM" -lt "2" ];
     mkswap /swapfile
     swapon -a /swapfile
 else
-  echo -e "Server running with at least 2G of RAM, no swap needed.${NC}"
+  echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
 fi
 #fi
 
