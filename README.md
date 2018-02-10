@@ -4,5 +4,6 @@ Shell script to install a [Beetle Masternode](http://www.beetlecoin.io/). Use it
 ***
 <strong>Usage:</strong>  
 
-wget -O - https://raw.githubusercontent.com/zoldur/Beetle/master/beetle.sh | bash  
+wget https://raw.githubusercontent.com/zoldur/Beetle/master/beetle.sh  
+bash ./beetle.sh    
 ***
