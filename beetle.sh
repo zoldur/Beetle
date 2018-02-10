@@ -36,7 +36,7 @@ echo -e "Checking if swap space is needed."
 PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 if [ "$PHYMEM" -lt "2" ];
   then
-    echo -e "${GREEN}Server is running with less than 2G of RAM, creating 2G swap file."
+    echo -e "${GREEN}Server is running with less than 2G of RAM, creating 2G swap file.${NC}"
     dd if=/dev/zero of=/swapfile bs=1024 count=2M
     chmod 600 /swapfile
     mkswap /swapfile
