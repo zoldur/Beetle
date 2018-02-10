@@ -56,8 +56,6 @@ read -p "Beetle user: " -i $DEFAULTBEETUSER -e BEETUSER
 : ${BEETUSER:=$DEFAULTBEETUSER}
 useradd -m $BEETUSER >/dev/null
 BEETHOME=$(sudo -H -u $BEETUSER bash -c 'echo $HOME')
-echo $BEETHOME
-read
 
 echo -e "Clone git and compile it. This may take some time. Press a key to continue."
 read -n 1 -s -r -p ""
