@@ -5,8 +5,7 @@ Shell script to install a [Beetle Masternode](https://beetlecoin.io) on a Linux 
 ## Installation:  
 
 wget -q https://raw.githubusercontent.com/zoldur/Beetle/master/beetle.sh  
-chmod +x ./beetle.sh  
-./beetle.sh
+bash beetle.sh
 ***
 
 ## Desktop wallet setup  
