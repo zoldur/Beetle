@@ -10,7 +10,7 @@ COIN_TGZ='https://github.com/zoldur/Beetle/releases/download/v1/beetle.tgz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Beetle'
 COIN_PORT=45823
-#RPC_PORT=
+RPC_PORT=47620
 
 NODEIP=$(curl -s4 icanhazip.com)
 
