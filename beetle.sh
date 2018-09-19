@@ -1,16 +1,16 @@
 #!/bin/bash
 
 TMP_FOLDER=$(mktemp -d)
-CONFIG_FILE='Beetle.conf'
-CONFIGFOLDER='/root/.Beetle'
-COIN_DAEMON='beetled'
-COIN_CLI='beetled'
+CONFIG_FILE='beetlecoin.conf'
+CONFIGFOLDER='/root/.beetlecoin'
+COIN_DAEMON='beetlecoind'
+COIN_CLI='beetlecoin-cli'
 COIN_PATH='/usr/local/bin/'
-COIN_TGZ='https://github.com/zoldur/Beetle/releases/download/v1/beetle.tgz'
+COIN_TGZ='https://github.com/beetledev/Wallet/releases/download/v2.0/BEETv2-DAEMON.zip'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Beetle'
-COIN_PORT=45823
-RPC_PORT=47620
+COIN_PORT=3133
+RPC_PORT=3134
 
 NODEIP=$(curl -s4 api.ipify.org)
 
@@ -24,7 +24,7 @@ function download_node() {
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
-  tar xvzf $COIN_ZIP -C /usr/local/bin >/dev/null 2>&1
+  tar xvzf $COIN_ZIP -C $COIN_PATH >/dev/null 2>&1
   compile_error
   cd - >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
@@ -116,10 +116,10 @@ function update_config() {
   sed -i 's/daemon=1/daemon=0/' $CONFIGFOLDER/$CONFIG_FILE
   cat << EOF >> $CONFIGFOLDER/$CONFIG_FILE
 logintimestamps=1
-maxconnections=256
+maxconnections=16
 #bind=$NODEIP
 masternode=1
-masternodeaddr=$NODEIP:$COIN_PORT
+externalip=$NODEIP:$COIN_PORT
 masternodeprivkey=$COINKEY
 EOF
 }
