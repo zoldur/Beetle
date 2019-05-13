@@ -3,11 +3,11 @@ Shell script to install a [Beetle Masternode](https://beetlecoin.io) on a Linux 
 
 ***
 ## Installation:
-
+```
 wget -N https://raw.githubusercontent.com/zoldur/Beetle/master/beetle_install.sh
 bash beetle_install.sh
+```
 ***
-
 
 ## Desktop wallet setup
 
@@ -58,8 +58,8 @@ systemctl is-enabled Beetle #To check if Beetle service is enabled on boot
 
 Any donation is highly appreciated
 
-**BTC**: 3MQLEcHXVvxpmwbB811qiC1c6g21ZKa7Jh
-**ETH**: 0x26B9dDa0616FE0759273D651e77Fe7dd7751E01E
-**LTC**: LNZpK4rCd1JVSB3rGKTAnTkudV9So9zexB
+**BTC**: 3MQLEcHXVvxpmwbB811qiC1c6g21ZKa7Jh  
+**ETH**: 0x26B9dDa0616FE0759273D651e77Fe7dd7751E01E  
+**LTC**: LNZpK4rCd1JVSB3rGKTAnTkudV9So9zexB  
 
 
