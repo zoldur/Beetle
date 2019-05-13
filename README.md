@@ -1,51 +1,65 @@
-# CropCoin
-Shell script to install a [Beetle Masternode](https://beetlecoin.io) on a Linux server running Ubuntu 16.04. Use it on your own risk.  
+# Beetle
+Shell script to install a [Beetle Masternode](https://beetlecoin.io) on a Linux server running Ubuntu 16.04. Use it on your own risk.
 
 ***
-## Installation:  
+## Installation:
 
-wget -q https://raw.githubusercontent.com/zoldur/Beetle/master/beetle.sh  
-bash beetle.sh
+wget -N https://raw.githubusercontent.com/zoldur/Beetle/master/beetle_install.sh
+bash beetle_install.sh
 ***
 
-## Desktop wallet setup  
 
-After the MN is up and running, you need to configure the desktop wallet accordingly. Here are the steps:  
-1. Open the Beetle Desktop Wallet.  
-2. Go to RECEIVE and create a New Address: **MN1**  
-3. Send **50000** BEET to **MN1**.  
-4. Wait for 15 confirmations.  
-5. Go to **Tools -> "Debug console"**  
-6. Type the following command: **masternode outputs**  
-7. Go to **Masternodes** tab  
-8. Click **Create** and fill the details:  
-* Alias: **MN1**  
-* Address: **VPS_IP:PORT**  
-* Privkey: **Masternode Private Key**  
-* TxHash: **First value from Step 6**  
-* Output index:  **Second value from Step 6**  
-* Reward address: leave blank  
-* Reward %: leave blank  
-9. Click **OK** to add the masternode  
-10. Click **Start All**  
+## Desktop wallet setup
 
+After the MN is up and running, you need to configure the desktop wallet accordingly. Here are the steps:
+1. Open the Beetle Desktop Wallet.
+2. Go to RECEIVE and create a New Address: **MN1**
+3. Send **10000** **50000*** or **150000** BEET to **MN1**. You need to send all coins in one single transaction.
+4. Wait for 15 confirmations.
+5. Go to **Help -> "Debug Window - Console"**
+6. Type the following command: **masternode outputs**
+7. Go to  ** Tools -> "Open Masternode Configuration File"
+8. Add the following entry:
+```
+Alias Address Privkey TxHash Output_index
+```
+* Alias: **MN1**
+* Address: **VPS_IP:PORT**
+* Privkey: **Masternode Private Key**
+* TxHash: **First value from Step 6**
+* Output index:  **Second value from Step 6** It can be **0** or **1**
+9. Click OK and exit the Wallet.
+10. Open Beetle Wallet, go to **Masternode Tab**. If you tab is not shown, please enable it from: **Settings - Options - Wallet - Show Masternodes Tab**
+11. Select your MN and click on **Start Alias**
+12. Login to your VPS and check your masternode status by running the following command. If you get **Masternode started successfully**, it means your masternode is active.
+```
+beetlecoin-cli masternode status
+```
 ***
 
-## Usage:  
-
-For security reasons **Beetle** is installed under **beetlecoin** user, hence you need to **su - beetlecoin** before chcking:    
+## Usage:
+```
+beetlecoin-cli mnsync status
+beetlecoin-cli masternode status #This will tell you if the masternode is running
+beetlecoin-cli getinfo
+```
+Also, if you want to check/start/stop **Beetle**, run one of the following commands as **root**:
 
 ```
-su - beetle
-beetled masternode status
-beetled getinfo
-```  
-
+systemctl status Beetle #To check if Beetle service is running
+systemctl start Beetle #To start Beetle service
+systemctl stop Beetle #To stop Beetle service
+systemctl is-enabled Beetle #To check if Beetle service is enabled on boot
+```
 ***
 
-  
-Any donation is highly appreciated  
 
-**BEET**: Bd63fusv7fXKz7zynxh7kRmVafJ19ujo8V  
-**BTC**: 1BzeQ12m4zYaQKqysGNVbQv1taN7qgS8gY  
-**ETH**: 0x39d10fe57611c564abc255ffd7e984dc97e9bd6d  
+## Donations
+
+Any donation is highly appreciated
+
+**BTC**: 3MQLEcHXVvxpmwbB811qiC1c6g21ZKa7Jh
+**ETH**: 0x26B9dDa0616FE0759273D651e77Fe7dd7751E01E
+**LTC**: LNZpK4rCd1JVSB3rGKTAnTkudV9So9zexB
+
+

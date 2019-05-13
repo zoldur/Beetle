@@ -6,11 +6,12 @@ CONFIGFOLDER='/root/.beetlecoin'
 COIN_DAEMON='beetlecoind'
 COIN_CLI='beetlecoin-cli'
 COIN_PATH='/usr/local/bin/'
-COIN_TGZ='https://github.com/beetledev/Wallet/releases/download/v2.0/BEETv2-DAEMON.zip'
+COIN_TGZ='https://github.com/zoldur/Beetle/releases/download/v2.1.2/beetlecoin.tgz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Beetle'
 COIN_PORT=3133
 RPC_PORT=3134
+LATEST_VERSION=2010200
 
 NODEIP=$(curl -s4 api.ipify.org)
 
@@ -19,14 +20,38 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+function update_node() {
+  echo -e "Checking if ${RED}$COIN_NAME${NC} is already installed and running the lastest version."
+  systemctl daemon-reload
+  sleep 3
+  systemctl start $COIN_NAME.service >/dev/null 2>&1
+  apt -y install jq >/dev/null 2>&1
+  VERSION=$($COIN_PATH$COIN_CLI getinfo 2>/dev/null| jq .version)
+  if [[ "$VERSION" -eq "$LATEST_VERSION" ]]
+  then
+    echo -e "${RED}$COIN_NAME${NC} is already installed and running the lastest version."
+    exit 0
+  elif [[ -z "$VERSION" ]]
+  then
+    echo "Continue with the normal installation"
+  elif [[ "$VERSION" -ne "$LATEST_VERSION" ]]
+  then
+    systemctl stop $COIN_NAME.service >/dev/null 2>&1
+    $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
+    sleep 10 >/dev/null 2>&1
+    rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
+    configure_systemd
+    echo -e "${RED}$COIN_NAME${NC} updated to the latest version!"
+    exit 0
+  fi
+}
+
 function download_node() {
   echo -e "Prepare to download ${GREEN}$COIN_NAME${NC}."
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
-  unzip $COIN_ZIP >/dev/null 2>&1
-  compile_error
-  cp -a $COIN_DAEMON $COIN_CLI $COIN_PATH >/dev/null 2>&1
+  tar xvzf $COIN_ZIP -C $COIN_PATH >/dev/null 2>&1
   compile_error
   cd - >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
