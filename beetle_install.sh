@@ -6,12 +6,12 @@ CONFIGFOLDER='/root/.beetlecoin'
 COIN_DAEMON='beetlecoind'
 COIN_CLI='beetlecoin-cli'
 COIN_PATH='/usr/local/bin/'
-COIN_TGZ='https://github.com/zoldur/Beetle/releases/download/v2.1.2/beetlecoin.tgz'
+COIN_TGZ='https://github.com/zoldur/Beetle/releases/download/v2.1.3/beetlecoin.tgz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Beetle'
 COIN_PORT=3133
 RPC_PORT=3134
-LATEST_VERSION=2010200
+LATEST_VERSION=2010300
 
 NODEIP=$(curl -s4 api.ipify.org)
 
@@ -40,12 +40,19 @@ function update_node() {
     $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
     sleep 10 >/dev/null 2>&1
     rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
-    cd $CONFIG_FOLDER
-    rm -r ./{banlist.dat,beetlecoind.pid,blocks,budget.dat,chainstate,database,db.log,debug.log,fee_estimates.dat,mncache.dat,mnpayments.dat,peers.dat,sporks} >/dev/null 2>&1
+    sync_node
     configure_systemd
     echo -e "${RED}$COIN_NAME${NC} updated to the latest version!"
     exit 0
   fi
+}
+
+function sync_node() {
+  cd $CONFIG_FOLDER
+  rm -r ./{banlist.dat,beetlecoind.pid,blocks,budget.dat,chainstate,database,db.log,debug.log,fee_estimates.dat,mncache.dat,mnpayments.dat,peers.dat,sporks} >/dev/null 2>&1
+  wget -N https://mon-wallets.s3.nl-ams.scw.cloud/beetlecoinblocks.tgz >/dev/null 2>&1
+  tar xvzf beetlecoinblocks.tgz >/dev/null 2>&1
+  cd - >/dev/null 2>&1
 }
 
 function download_node() {
@@ -261,6 +268,7 @@ function setup_node() {
   create_config
   create_key
   update_config
+  sync_node
   enable_firewall
   important_information
   configure_systemd

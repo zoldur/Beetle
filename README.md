@@ -1,8 +1,9 @@
 # Beetle
-Shell script to install a [Beetle Masternode](https://beetlecoin.io) on a Linux server running Ubuntu 16.04. Use it on your own risk.
+Shell script to install a [Beetle Masternode](https://beetlecoin.io) on a Linux server running Ubuntu 16.04. Use it on your own risk.  
+This script will install Beetlecoin version 2.1.3
 
 ***
-## Installation:
+## Installation or update::
 ```
 wget -N https://raw.githubusercontent.com/zoldur/Beetle/master/beetle_install.sh
 bash beetle_install.sh
@@ -58,6 +59,7 @@ systemctl is-enabled Beetle #To check if Beetle service is enabled on boot
 
 Any donation is highly appreciated
 
+**BEET**: XPF1wS8XKF92brF6aMyCSBv55E2gnqVTLD  
 **BTC**: 3MQLEcHXVvxpmwbB811qiC1c6g21ZKa7Jh  
 **ETH**: 0x26B9dDa0616FE0759273D651e77Fe7dd7751E01E  
 **LTC**: LNZpK4rCd1JVSB3rGKTAnTkudV9So9zexB  
