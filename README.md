@@ -1,6 +1,6 @@
 # Beetle
 Shell script to install a [Beetle Masternode](https://beetlecoin.io) on a Linux server running Ubuntu 16.04. Use it on your own risk.  
-This script will install Beetlecoin version 2.1.3
+This script will install Beetlecoin version 2.1.3 and re-sync it from scratch using bootstrap.dat
 
 ***
 ## Installation or update::

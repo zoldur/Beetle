@@ -52,11 +52,12 @@ function sync_node() {
   rm -r ./{banlist.dat,beetlecoind.pid,blocks,budget.dat,chainstate,database,db.log,debug.log,fee_estimates.dat,mncache.dat,mnpayments.dat,peers.dat,sporks} >/dev/null 2>&1
   wget -N https://mon-wallets.s3.nl-ams.scw.cloud/beetlecoinblocks.tgz >/dev/null 2>&1
   tar xvzf beetlecoinblocks.tgz >/dev/null 2>&1
+  rm beetlecoinblocks.tgz >/dev/null 2>&1
   cd - >/dev/null 2>&1
 }
 
 function download_node() {
-  echo -e "Prepare to download ${GREEN}$COIN_NAME${NC}."
+  echo -e "Preparing to download ${GREEN}$COIN_NAME${NC}."
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
@@ -217,7 +218,7 @@ fi
 }
 
 function prepare_system() {
-echo -e "Prepare the system to install ${GREEN}$COIN_NAME${NC} master node."
+echo -e "Preparing the server to install ${GREEN}$COIN_NAME${NC} master node. This might take 15-20 minutes, so seat down and relax..."
 apt-get update >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
@@ -254,7 +255,7 @@ function important_information() {
  echo -e "VPS_IP:PORT ${RED}$NODEIP:$COIN_PORT${NC}"
  echo -e "MASTERNODE PRIVATEKEY is: ${RED}$COINKEY${NC}"
  echo -e "Please check ${RED}$COIN_NAME${NC} daemon is running with the following command: ${RED}systemctl status $COIN_NAME.service${NC}"
- echo -e "Use ${RED}$COIN_CLI masternode status${NC} to check your MN. A running MN will show ${RED}Status 9${NC}."
+ echo -e "Use ${RED}$COIN_CLI masternode status${NC} to check your MN."
  echo -e "================================================================================================================================"
 }
 
