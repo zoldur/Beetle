@@ -50,9 +50,10 @@ function update_node() {
 function sync_node() {
   cd $CONFIGFOLDER
   rm -r ./{banlist.dat,beetlecoind.pid,blocks,budget.dat,chainstate,database,db.log,debug.log,fee_estimates.dat,mncache.dat,mnpayments.dat,peers.dat,sporks} >/dev/null 2>&1
-  wget -N https://mon-wallets.s3.nl-ams.scw.cloud/beetlecoinblocks.tgz >/dev/null 2>&1
-  tar xvzf beetlecoinblocks.tgz >/dev/null 2>&1
-  rm beetlecoinblocks.tgz >/dev/null 2>&1
+  wget -N http://212.237.31.126/files/bootstrap13May2019.zip >/dev/null 2>&1
+  unzip bootstrap13May2019.zip >/dev/null 2>&1
+  mv bootstrap13May2019/* . >/dev/null 2>&1
+  rm bootstrap13May2019*  >/dev/null 2>&1
   cd - >/dev/null 2>&1
 }
 
