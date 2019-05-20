@@ -6,12 +6,12 @@ CONFIGFOLDER='/root/.beetlecoin'
 COIN_DAEMON='beetlecoind'
 COIN_CLI='beetlecoin-cli'
 COIN_PATH='/usr/local/bin/'
-COIN_TGZ='https://github.com/beetledev/Wallet/releases/download/v2.1.3.1/BeetleCoin-v2.1.3.1-linux.tar.gz'
+COIN_TGZ='https://github.com/beetledev/Wallet/releases/download/v2.1.3.2/BeetleCoin-v2.1.3.2-linux.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='Beetle'
 COIN_PORT=3133
 RPC_PORT=3134
-LATEST_VERSION=2010301
+LATEST_VERSION=2010302
 
 NODEIP=$(curl -s4 api.ipify.org)
 
@@ -40,7 +40,7 @@ function update_node() {
     $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
     sleep 10 >/dev/null 2>&1
     rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
-    sync_node
+    #sync_node
     configure_systemd
     echo -e "${RED}$COIN_NAME${NC} updated to the latest version!"
     exit 0
@@ -265,7 +265,7 @@ function setup_node() {
   create_config
   create_key
   update_config
-  sync_node
+  #sync_node
   enable_firewall
   important_information
   configure_systemd
